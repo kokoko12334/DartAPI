@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import re
 import pickle
 from lxml import etree
-from xml.etree import ElementTree as et
+import xml.etree.ElementTree as ETree
 def table_to_string(table_tag):
     data = []
     
@@ -57,24 +57,14 @@ for k, v in test_data:
         with open(xml_filename, 'r', encoding='utf-8') as file:
             xml_data = file.read()
 
-        
-        if xml_data.startswith('<?xml'):
-            xml_data = xml_data.split('?>', 1)[1]
-        
-        xml_data = xml_data.replace("&", "&amp;")
-        import xml.etree.ElementTree as ETree
+
 
         parser = ETree.XMLParser(encoding="utf-8")
         tree = ETree.parse(xml_filename, parser=parser)
         print(ETree.tostring(tree.getroot()))
 
-        soup = BeautifulSoup(xml_data, 'xml')
-        print(len(str(soup)))
-        soup = etree.fromstring(xml_data)
-        et.parse(xml_filename)
 
-
-        
+        soup = tree
         
         # 조건에 맞는 SECTION-2 태그 찾기
         extracted_sections = soup.find_all('SECTION-2')
@@ -129,10 +119,16 @@ for k, v in test_data:
         continue
 
 
-from lxml import etree
-parser = etree.XMLParser(recover=True)
-if xml_data.startswith('<?xml'):
-            xml_data = xml_data.split('?>', 1)[1]
 
-xml_data = xml_data.replace("&", "&amp;")
-result = etree.fromstring(xml_data)
+
+directory = 'company_report'
+name = '로스웰'
+test_data = [(name, corp_info[name])]
+corp_name, corp_code, stock_code, mofidy_date, rcp_no = test_data[0][0], *test_data[0][1]
+xml_filename = f'{directory}/{corp_name}-{corp_code}-{stock_code}-{mofidy_date}.xml'
+
+with open(xml_filename, 'r', encoding='utf-8') as file:
+            xml_data = file.read()
+
+parser = ETree.XMLParser(encoding="utf-8")
+tree = ETree.parse(xml_filename, parser=parser)
