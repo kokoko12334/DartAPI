@@ -1,9 +1,7 @@
 import OpenDartReader
 import os
-### 0. 객체 생성 ###
-# 객체 생성 (API KEY 지정) 
 from dotenv import load_dotenv
-# Open DART API KEY 설정
+
 load_dotenv()
 api_key=os.getenv('DARTAPIKEY')
 
@@ -80,3 +78,95 @@ dart.find_corp_code('삼성전자')
 dart.report('005930', '미등기임원보수', 2021)  # 미등기임원 보수현황
 dart.report('005930', '증자', 2021) # 증자(감자) 현황
 dart.report('005930', '배당', 2018)  # 배당에 관한 사항
+
+
+
+
+import dart_fss as dart
+from dotenv import load_dotenv
+load_dotenv()
+api_key=os.getenv('DARTAPIKEY')
+dart.set_api_key(api_key=api_key)
+
+
+# 삼성전자 code
+corp_code = '00126380'
+
+# 모든 상장된 기업 리스트 불러오기
+corp_list = dart.get_corp_list()
+
+# 삼성전자
+samsung = corp_list.find_by_corp_code(corp_code=corp_code)
+
+# 연간보고서 검색
+reports = samsung.search_filings(bgn_de='20210101', pblntf_detail_ty='a001')
+
+# 가장 최신 보고서 선택
+newest_report = reports[0]
+newest_report
+
+from dart_fss.xbrl.dart_xbrl import DartXbrl
+from arelle import ModelXbrl, XbrlConst
+from arelle import Cntlr
+
+# model_xbrl = cntlr.modelManager.load(file_path)
+DartXbrl("./company_report/AK홀딩스-00125080-006840-20230111.xml", xbrl=ModelXbrl())
+dart.xbrl.get_xbrl_from_file("AK홀딩스-00125080-006840-20230111.xml")
+
+from arelle import Cntlr
+from arelle.ModelXbrl import ModelXbrl
+import pickle
+def load_xbrl_file(filepath):
+    # Controller 객체 생성
+    cntlr = Cntlr.Cntlr()
+
+    # XBRL 파일 로드
+
+    model_xbrl = cntlr.modelManager.load(filepath)
+    print(model_xbrl.facts)
+    if model_xbrl.facts is None:
+        print("Error loading XBRL file.")
+        return
+    
+    # 성공적으로 로드 및 검증된 경우
+    print("XBRL file loaded and validated successfully.")
+    return model_xbrl
+# XBRL 파일 경로 지정
+xbrl_file_path = "path/to/your/xbrl-file.xbrl"
+
+
+with open('corp_info.pkl', 'rb') as file:
+    corp_info = pickle.load(file)
+
+
+
+directory = './company_report'
+name = '로스웰'
+test_data = [(name, corp_info[name])]
+corp_name, corp_code, stock_code, mofidy_date, rcp_no = test_data[0][0], *test_data[0][1]
+xml_filename = f'{directory}/{corp_name}-{corp_code}-{stock_code}-{mofidy_date}.xml'
+
+# XBRL 파일 로드 및 검증 실행
+result = load_xbrl_file(xml_filename)
+
+print(xml_filename)
+dart.xbrl.get_xbrl_from_file("test/20240312000736_00760.xml")
+
+
+import requests
+import zipfile
+import io
+newest_report
+api_key
+rcp_no = '20240312000736'
+url = f'https://opendart.fss.or.kr/api/document.xml?crtfc_key={api_key}&rcept_no={rcp_no}'
+
+        # 공시 리포트 xml파일 데이터 요청
+response = requests.get(url)
+response.raise_for_status()  # 요청에 실패하면 예외 발생
+
+# 응답 데이터 저장 및 ZIP 파일 해제
+with zipfile.ZipFile(io.BytesIO(response.content)) as thezip:
+    #company_report 폴더 경로에 압축 해제
+    extract_path = 'test'
+    thezip.extractall(extract_path)

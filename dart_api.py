@@ -27,6 +27,31 @@ with open('corp_info.pkl', 'rb') as file:
 # 모든 상장된 기업 리스트 불러오기
 corp_list = dart.get_corp_list()
 
+corp_code = '00126380'
+
+# 삼성전자
+samsung = corp_list.find_by_corp_code(corp_code=corp_code)
+
+# 연간보고서 검색
+reports = samsung.search_filings(bgn_de='20210101', pblntf_detail_ty='a001')
+
+# 가장 최신 보고서 선택
+newest_report = reports[0]
+xbrl = newest_report.xbrl
+
+
+xbrl.exist_consolidated()
+xbrl.get_cash_flows(True)
+xbrl.get_document_information()
+
+
+dart.api.filings.download_document()
+
+dart.api.filings.get_corp_info(corp_code=corp_code)
+
+
+reports
+
 # 회사 최신리포트를 DART API 요청하는 함수
 def dart_report_request(corp_name, corp_code, stock_code, mofidy_date):
     global cnt

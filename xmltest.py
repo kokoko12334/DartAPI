@@ -119,6 +119,9 @@ for k, v in test_data:
         continue
 
 
+with open('corp_info.pkl', 'rb') as file:
+    corp_info = pickle.load(file)
+
 
 
 directory = 'company_report'
@@ -130,5 +133,23 @@ xml_filename = f'{directory}/{corp_name}-{corp_code}-{stock_code}-{mofidy_date}.
 with open(xml_filename, 'r', encoding='utf-8') as file:
             xml_data = file.read()
 
-parser = ETree.XMLParser(encoding="utf-8")
-tree = ETree.parse(xml_filename, parser=parser)
+
+
+
+
+
+
+
+from xbrl import XBRLParser, GAAP, GAAPSerializer
+
+
+# Step 1: XBRL 파일 파싱을 위한 초기화
+xbrl_parser = XBRLParser()
+
+# XBRL 파일 경로 지정
+xbrl_file = 'sample-20131228.xml'
+
+
+# Step 2: XBRL 파일 파싱
+with open(xml_filename, 'r') as file:
+    xbrl = xbrl_parser.parse(file)
