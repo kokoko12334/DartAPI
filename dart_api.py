@@ -8,6 +8,7 @@ import logging
 import re
 from dotenv import load_dotenv
 # Open DART API KEY 설정
+
 load_dotenv()
 api_key=os.getenv('DARTAPIKEY')
 dart.set_api_key(api_key=api_key)
@@ -27,6 +28,7 @@ with open('corp_info.pkl', 'rb') as file:
 # 모든 상장된 기업 리스트 불러오기
 corp_list = dart.get_corp_list()
 
+len(corp_list)
 corp_code = '00126380'
 
 # 삼성전자
